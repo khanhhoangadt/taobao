@@ -99,7 +99,22 @@
                                     <input type="email" class="form-control" id="email" name="email" required value="{{ old('email') ? old('email') : $adminUser->email }}">
                                 </td>
                             </tr>
-
+                            <tr class="@if ($errors->has('phone')) has-error @endif">
+                                <td>
+                                    <label for="phone">Số điện thoại</label>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control" id="phone" name="phone" required value="{{ old('phone') ? old('phone') : $adminUser->phone }}">
+                                </td>
+                            </tr>                            
+                            <tr class="@if ($errors->has('Địa chỉ')) has-error @endif">
+                                <td>
+                                    <label for="address">Địa chỉ</label>
+                                </td>
+                                <td>
+                                    <input type="string" class="form-control" id="" name="address" required value="{{ old('address') ? old('address') : $adminUser->address }}">
+                                </td>
+                            </tr>  
                             <tr class="@if ($errors->has('password')) has-error @endif">
                                 <td>
                                     <label for="password">@lang('admin.pages.users.columns.password')</label>

@@ -211,6 +211,31 @@ return [
                 'revoked'                => 'Revoked',
             ],
         ],
+        'orders'   => [
+            'columns'  => [
+                'code' => 'Code',
+                'deliveried_money' => 'Deliveried_money',
+                'total_money' => 'Total_money',
+                'admin_user_id' => 'Admin_user_id',
+                'customer_id' => 'Customer_id',
+                'time' => 'Time',
+            ],
+        ],
+        'delivery-codes'   => [
+            'columns'  => [
+                'code' => 'Code',
+                'weight' => 'Weight',
+                'customer_id' => 'Customer_id',
+                'status' => 'Status',
+            ],
+        ],
+        'prices'   => [
+            'columns'  => [
+                'customer_id' => 'Customer_id',
+                'qty' => 'Qty',
+                'price' => 'Price',
+            ],
+        ],
         /* NEW PAGE STRINGS */
     ],
     'roles'      => [

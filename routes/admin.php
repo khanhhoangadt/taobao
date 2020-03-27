@@ -46,6 +46,9 @@
 
         \Route::post('signout', 'Admin\AuthController@postSignOut');
 
+        \Route::resource('orders', 'Admin\OrderController');
+        \Route::resource('delivery-codes', 'Admin\DeliveryCodeController');
+        \Route::resource('prices', 'Admin\PriceController');
         /* NEW ADMIN RESOURCE ROUTE */
 
     });

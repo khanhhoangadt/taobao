@@ -177,4 +177,35 @@ $factory->define(
     }
 );
 
+$factory->define(App\Models\Order::class, function (Faker\Generator $faker) {
+    return [
+        'id' => '',
+        'code' => '',
+        'deliveried_money' => '',
+        'total_money' => '',
+        'admin_user_id' => '',
+        'customer_id' => '',
+        'time' => '',
+    ];
+});
+
+$factory->define(App\Models\DeliveryCode::class, function (Faker\Generator $faker) {
+    return [
+        'id' => '',
+        'code' => '',
+        'weight' => '',
+        'customer_id' => '',
+        'status' => '',
+    ];
+});
+
+$factory->define(App\Models\Price::class, function (Faker\Generator $faker) {
+    return [
+        'id' => '',
+        'customer_id' => '',
+        'qty' => '',
+        'price' => '',
+    ];
+});
+
 /* NEW MODEL FACTORY */

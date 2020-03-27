@@ -88,6 +88,21 @@ class RepositoryBindServiceProvider extends ServiceProvider {
             \App\Repositories\OauthRefreshTokenRepositoryInterface::class,
             \App\Repositories\Eloquent\OauthRefreshTokenRepository::class
         );
+        $this->app->singleton(
+            \App\Repositories\OrderRepositoryInterface::class,
+            \App\Repositories\Eloquent\OrderRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\DeliveryCodeRepositoryInterface::class,
+            \App\Repositories\Eloquent\DeliveryCodeRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\PriceRepositoryInterface::class,
+            \App\Repositories\Eloquent\PriceRepository::class
+        );
+
         /* NEW BINDING */
     }
 }

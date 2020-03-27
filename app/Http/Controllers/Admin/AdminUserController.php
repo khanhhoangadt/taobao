@@ -105,6 +105,7 @@ class AdminUserController extends Controller
                 'password',
                 're_password',
                 'locale',
+                'phone',
             ]
         );
         $exist = $this->adminUserRepository->findByEmail($input['email']);
@@ -209,6 +210,8 @@ class AdminUserController extends Controller
                 'name',
                 'email',
                 'locale',
+                'phone',
+                'address',
             ]
         );
 
