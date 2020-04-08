@@ -1,12 +1,7 @@
 <?php namespace App\Models;
 
-
-
 class DeliveryCode extends Base
 {
-
-    
-
     /**
      * The database table used by the model.
      *
@@ -24,7 +19,12 @@ class DeliveryCode extends Base
         'weight',
         'customer_id',
         'status',
+        'staff_id'
     ];
+
+    const STATUS_NOT_RECIVE = 1;
+    const STATUS_RECIVED = 2;
+    const STATUS_PAYED = 3;
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -46,7 +46,12 @@ class DeliveryCode extends Base
     // Relations
     public function customer()
     {
-        return $this->belongsTo(\App\Models\Customer::class, 'customer_id', 'id');
+        return $this->belongsTo(\App\Models\AdminUser::class, 'customer_id', 'id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(\App\Models\AdminUser::class, 'staff_id', 'id');
     }
 
     

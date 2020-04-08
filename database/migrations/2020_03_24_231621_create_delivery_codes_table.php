@@ -15,8 +15,9 @@ class CreatedeliveryCodesTable extends Migration
         Schema::create('delivery_codes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code')->nullable();
-            $table->integer('weight')->nullable();
+            $table->float('weight')->nullable();
             $table->bigInteger("customer_id")->default(0);
+            $table->bigInteger("staff_id")->default(0);
             $table->integer('status')->default(1);
             // Add some more columns
 

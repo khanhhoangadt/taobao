@@ -208,4 +208,38 @@ $factory->define(App\Models\Price::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Models\OderDelivery::class, function (Faker\Generator $faker) {
+    return [
+    ];
+});
+
+$factory->define(App\Models\OrderDelivery::class, function (Faker\Generator $faker) {
+    return [
+    ];
+});
+
+$factory->define(App\Models\OrdersDelivery::class, function (Faker\Generator $faker) {
+    return [
+        'id' => '',
+        'order_id' => '',
+        'delivery_code_id' => '',
+    ];
+});
+
+$factory->define(App\Models\Config::class, function (Faker\Generator $faker) {
+    return [
+        'id' => '',
+        'name' => '',
+        'value' => '',
+    ];
+});
+
+$factory->define(App\Models\DeliveryCodesTempt::class, function (Faker\Generator $faker) {
+    return [
+        'id' => '',
+        'name' => '',
+        'code' => '',
+    ];
+});
+
 /* NEW MODEL FACTORY */

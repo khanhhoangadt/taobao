@@ -28,6 +28,7 @@
 
             \Route::resource('oauth-clients', 'Admin\OauthClientController');
             \Route::resource('logs', 'Admin\LogController');
+            \Route::resource('prices', 'Admin\PriceController');
 
         });
 
@@ -36,6 +37,14 @@
             \Route::resource('admin-user-notifications', 'Admin\AdminUserNotificationController');
             
             \Route::get('load-notification/{offset}', 'Admin\AdminUserNotificationController@loadNotification');
+
+            \Route::resource('delivery-codes', 'Admin\DeliveryCodeController');
+            \Route::post('import-delivery-codes', 'Admin\DeliveryCodeController@import');
+
+            \Route::get('customer-payments', 'Admin\AdminUserController@payment');
+            \Route::get('customer-update-after-payments/{customer_id}', 'Admin\AdminUserController@updateStatusAfterPayment');
+            \Route::get('customer-config', 'Admin\AdminUserController@config');
+            \Route::post('customer-store-config', 'Admin\AdminUserController@storeConfig');
         });
 
         \Route::get('/', 'Admin\IndexController@index');
@@ -47,8 +56,13 @@
         \Route::post('signout', 'Admin\AuthController@postSignOut');
 
         \Route::resource('orders', 'Admin\OrderController');
-        \Route::resource('delivery-codes', 'Admin\DeliveryCodeController');
-        \Route::resource('prices', 'Admin\PriceController');
+        \Route::get('orders-delivery-code/{order_id}', 'Admin\OrderController@listDeliveryCode');
+        \Route::get('create-orders-delivery-code/{order_id}', 'Admin\OrderController@createDeliveryCode');
+        \Route::post('save-orders-delivery-code', 'Admin\OrderController@saveDeliveryCode');
+        \Route::delete('delete-orders-delivery-code/{delivery_code_id}', 'Admin\OrderController@destroyDeliveryCode');
+
+        \Route::resource('orders-deliveries', 'Admin\OrdersDeliveryController');
+        \Route::resource('delivery-codes-tempts', 'Admin\DeliveryCodesTemptController');
         /* NEW ADMIN RESOURCE ROUTE */
 
     });

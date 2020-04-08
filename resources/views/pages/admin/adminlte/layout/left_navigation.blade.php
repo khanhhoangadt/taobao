@@ -25,28 +25,27 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>
-
-            <li @if( $menu=='dashboard') class="active" @endif ><a href="{!! \URL::action('Admin\IndexController@index') !!}"><i class="fa fa-dashboard"></i> <span>@lang('admin.menu.dashboard')</span></a></li>
-            <li @if( $menu=='articles') class="active" @endif ><a href="{!! \URL::action('Admin\ArticleController@index') !!}"><i class="fa fa-file-word-o"></i> <span>@lang('admin.menu.articles')</span></a></li>
-
             @if( $authUser->hasRole(\App\Models\AdminUserRole::ROLE_ADMIN) )
-                <li class="header">Users Management</li>
-                <li @if( $menu=='admin_users') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@index') !!}"><i class="fa fa-user-secret"></i> <span>@lang('admin.menu.admin_users')</span></a></li>
-                <li @if( $menu=='admin_user_notifications') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserNotificationController@index') !!}"><i class="fa fa-bell-o"></i> <span>@lang('admin.menu.admin_user_notifications')</span></a></li>
-
-                <li @if( $menu=='users') class="active" @endif ><a href="{!! \URL::action('Admin\UserController@index') !!}"><i class="fa fa-users"></i> <span>@lang('admin.menu.users')</span></a></li>
-                <li @if( $menu=='user_notifications') class="active" @endif ><a href="{!! \URL::action('Admin\UserNotificationController@index') !!}"><i class="fa fa-bell"></i> <span>@lang('admin.menu.user_notifications')</span></a></li>
-            @endif
+                
+                @endif
 
             @if( $authUser->hasRole(\App\Models\AdminUserRole::ROLE_SUPER_USER) )
-                <li class="header">Backend</li>
-                <li @if( $menu=='oauth_clients') class="active" @endif ><a href="{!! \URL::action('Admin\OauthClientController@index') !!}"><i class="fa fa-key"></i> <span>OauthClients</span></a></li>
-                <li @if( $menu=='images') class="active" @endif ><a href="{!! \URL::action('Admin\ImageController@index') !!}"><i class="fa fa-file-image-o"></i> <span>@lang('admin.menu.images')</span></a></li>
-                <li @if( $menu=='logs') class="active" @endif ><a href="{!! \URL::action('Admin\LogController@index') !!}"><i class="fa fa-sticky-note-o"></i> <span>@lang('admin.menu.log_system')</span></a></li>
+                {{-- <li @if( $menu=='dashboard') class="active" @endif ><a href="{!! \URL::action('Admin\IndexController@index') !!}"><i class="fa fa-dashboard"></i> <span>@lang('admin.menu.dashboard')</span></a></li> --}}
+                {{-- <li @if( $menu=='articles') class="active" @endif ><a href="{!! \URL::action('Admin\ArticleController@index') !!}"><i class="fa fa-file-word-o"></i> <span>@lang('admin.menu.articles')</span></a></li> --}}
+
+                <li class="header">Users Management</li>
+                <li @if( $menu=='admin_users') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@index') !!}"><i class="fa fa-user-secret"></i> <span>@lang('admin.menu.admin_users')</span></a></li>
+                <li @if( $menu=='prices') class="active" @endif ><a href="{!! \URL::action('Admin\PriceController@index') !!}"><i class="fa fa-users"></i> <span> Bảng giá </span></a></li>
+                <li @if( $menu=='configs') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@config') !!}"><i class="fa fa-users"></i> <span> Cấu hình chung </span></a></li>
             @endif
-            <li @if( $menu=='orders') class="active" @endif ><a href="{!! \URL::action('Admin\OrderController@index') !!}"><i class="fa fa-users"></i> <span>Hóa đơn</span></a></li>
+            @if( $authUser->hasRole(\App\Models\AdminUserRole::ROLE_ADMIN) )
             <li @if( $menu=='delivery_codes') class="active" @endif ><a href="{!! \URL::action('Admin\DeliveryCodeController@index') !!}"><i class="fa fa-users"></i> <span> Mã vận đơn</span></a></li>
-            <li @if( $menu=='prices') class="active" @endif ><a href="{!! \URL::action('Admin\PriceController@index') !!}"><i class="fa fa-users"></i> <span> Bảng giá </span></a></li>
+            <li @if( $menu=='payment') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@payment') !!}"><i class="fa fa-users"></i> <span>Thanh Toán</span></a></li>
+            <li @if( $menu=='delivery_codes_tempts') class="active" @endif ><a href="{!! \URL::action('Admin\DeliveryCodesTemptController@index') !!}"><i class="fa fa-users"></i> <span>MVĐ không thuộc hệ thống</span></a></li>
+            @endif
+            @if( $authUser->hasRole(\App\Models\AdminUserRole::ROLE_SUPER_USER) ||  $authUser->hasRole(\App\Models\AdminUserRole::ROLE_CUSTOMER, false))
+            <li @if( $menu=='orders') class="active" @endif ><a href="{!! \URL::action('Admin\OrderController@index') !!}"><i class="fa fa-users"></i> <span>Hóa đơn</span></a></li>
+            @endif
             <!-- %%SIDEMENU%% -->
         </ul>
     </section>

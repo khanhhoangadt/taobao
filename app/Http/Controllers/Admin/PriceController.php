@@ -7,16 +7,21 @@ use App\Http\Controllers\Controller;
 use App\Repositories\PriceRepositoryInterface;
 use App\Http\Requests\Admin\PriceRequest;
 use App\Http\Requests\PaginationRequest;
+use App\Repositories\AdminUserRepositoryInterface;
+use App\Models\AdminUserRole;
 
 class PriceController extends Controller
 {
     /** @var  \App\Repositories\PriceRepositoryInterface */
     protected $priceRepository;
+    protected $adminUserRepository;
 
     public function __construct(
-        PriceRepositoryInterface $priceRepository
+        PriceRepositoryInterface $priceRepository,
+        AdminUserRepositoryInterface $adminUserRepository
     ) {
         $this->priceRepository = $priceRepository;
+        $this->adminUserRepository = $adminUserRepository;
     }
 
     /**
@@ -60,6 +65,8 @@ class PriceController extends Controller
      */
     public function create()
     {
+        $customers = $this->adminUserRepository->allByRole(AdminUserRole::ROLE_CUSTOMER);
+        
         return view(
             'pages.admin.' . config('view.admin') . '.prices.edit',
             [

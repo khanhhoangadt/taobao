@@ -9,7 +9,7 @@ if (env('APP_ENV') === 'local') {
 }
 
 return [
-
+    'monney_per_kg' => 'MONNEY_PER_KG',
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -193,6 +193,7 @@ return [
         App\Providers\RepositoryBindServiceProvider::class,
         App\Providers\ServiceBindServiceProvider::class,
         App\Providers\HelperBindServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ], $additionalProviders),
 
@@ -252,6 +253,7 @@ return [
         'TypeHelper'             => App\Facades\TypeHelper::class,
         'RedirectHelper'         => App\Facades\RedirectHelper::class,
         'CacheHelper'            => App\Facades\CacheHelper::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         /* NEW FACADE */
     ],
 

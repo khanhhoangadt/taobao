@@ -67,6 +67,7 @@ class AdminUser extends AuthenticatableBase
         'last_notification_id',
         'phone',
         'address',
+        'code'
     ];
 
     /**

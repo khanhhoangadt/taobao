@@ -7,16 +7,27 @@ use App\Http\Controllers\Controller;
 use App\Repositories\DeliveryCodeRepositoryInterface;
 use App\Http\Requests\Admin\DeliveryCodeRequest;
 use App\Http\Requests\PaginationRequest;
+use App\Repositories\AdminUserRepositoryInterface;
+use App\Models\AdminUserRole;
+use App\Services\AdminUserServiceInterface;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\DeliveryCodeImport;
 
 class DeliveryCodeController extends Controller
 {
     /** @var  \App\Repositories\DeliveryCodeRepositoryInterface */
     protected $deliveryCodeRepository;
+    protected $adminUserRepository;
+    protected $adminUserService;
 
     public function __construct(
-        DeliveryCodeRepositoryInterface $deliveryCodeRepository
+        DeliveryCodeRepositoryInterface $deliveryCodeRepository,
+        AdminUserRepositoryInterface $adminUserRepository,
+        AdminUserServiceInterface $adminUserService
     ) {
         $this->deliveryCodeRepository = $deliveryCodeRepository;
+        $this->adminUserRepository = $adminUserRepository;
+        $this->adminUserService = $adminUserService;
     }
 
     /**
@@ -36,7 +47,7 @@ class DeliveryCodeController extends Controller
         $filter = [];
         $keyword = $request->get('keyword');
         if (!empty($keyword)) {
-            $filter['query'] = $keyword;
+            $filter['code'] = $keyword;
         }
 
         $count = $this->deliveryCodeRepository->countByFilter($filter);
@@ -60,11 +71,13 @@ class DeliveryCodeController extends Controller
      */
     public function create()
     {
+        $customers = $this->adminUserRepository->allByRole(AdminUserRole::ROLE_CUSTOMER);
         return view(
             'pages.admin.' . config('view.admin') . '.delivery-codes.edit',
             [
                 'isNew'     => true,
                 'deliveryCode' => $this->deliveryCodeRepository->getBlankModel(),
+                'customers' => $customers
             ]
         );
     }
@@ -79,14 +92,14 @@ class DeliveryCodeController extends Controller
     {
         $input = $request->only(
             [
-                            'code',
-                            'weight',
-                            'customer_id',
-                            'status',
-                        ]
+                'code',
+                'weight',
+                'customer_id',
+                'status',
+            ]
         );
-
-        $input['is_enabled'] = $request->get('is_enabled', 0);
+        $userLogin = $this->adminUserService->getUser();
+        $input['staff_id'] = $userLogin->id;
         $deliveryCode = $this->deliveryCodeRepository->create($input);
 
         if( empty($deliveryCode) ) {
@@ -105,6 +118,7 @@ class DeliveryCodeController extends Controller
      */
     public function show($id)
     {
+        $customers = $this->adminUserRepository->allByRole(AdminUserRole::ROLE_CUSTOMER);
         $deliveryCode = $this->deliveryCodeRepository->find($id);
         if( empty($deliveryCode) ) {
             abort(404);
@@ -115,6 +129,7 @@ class DeliveryCodeController extends Controller
             [
                 'isNew' => false,
                 'deliveryCode' => $deliveryCode,
+                'customers' => $customers
             ]
         );
     }
@@ -147,14 +162,14 @@ class DeliveryCodeController extends Controller
 
         $input = $request->only(
             [
-                            'code',
-                            'weight',
-                            'customer_id',
-                            'status',
-                        ]
+                'weight',
+                'status',
+            ]
         );
+       
+        $userLogin = $this->adminUserService->getUser();
+        $input['staff_id'] = $userLogin->id;
 
-        $input['is_enabled'] = $request->get('is_enabled', 0);
         $this->deliveryCodeRepository->update($deliveryCode, $input);
 
         return redirect()->action('Admin\DeliveryCodeController@show', [$id])
@@ -180,4 +195,11 @@ class DeliveryCodeController extends Controller
                     ->with('message-success', trans('admin.messages.general.delete_success'));
     }
 
+    public function import()
+    {
+        Excel::import(new DeliveryCodeImport, request()->file('file'));
+           
+        return redirect()->back()
+                    ->with('message-success', 'Đã import thành công, vui lòng kiểm tra lại ở mục MVĐ Không Thuộc Hệ Thống!');
+    }
 }

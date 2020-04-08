@@ -5,15 +5,19 @@
 
 @section('styles')
     <link rel="stylesheet" href="{!! \URLHelper::asset('libs/datetimepicker/css/bootstrap-datetimepicker.min.css', 'admin') !!}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 @stop
 
 @section('scripts')
     <script src="{{ \URLHelper::asset('libs/moment/moment.min.js', 'admin') }}"></script>
     <script src="{{ \URLHelper::asset('libs/datetimepicker/js/bootstrap-datetimepicker.min.js', 'admin') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script>
         $('.datetime-field').datetimepicker({'format': 'YYYY-MM-DD HH:mm:ss', 'defaultDate': new Date()});
 
         $(document).ready(function () {
+            $('.staff').select2()
+            $('.customer').select2()
             $('#cover-image').change(function (event) {
                 $('#cover-image-preview').attr('src', URL.createObjectURL(event.target.files[0]));
             });
@@ -64,11 +68,11 @@
             </div>
 
             <div class="box-body">
-                                                            <div class="row">
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="code">Mã vận đơn</label>
-                                    <input type="text" class="form-control m-input" name="code" id="code" required placeholder="Mã vận đơn" value="{{ old('code') ? old('code') : $order->code }}">
+                                    <label for="code">Mã hoá đơn</label>
+                                    <input type="text" class="form-control m-input" name="code" id="code" required placeholder="Mã hoá đơn" value="{{ old('code') ? old('code') : $order->code }}">
                                 </div>
                             </div>
                         </div>
@@ -88,22 +92,8 @@
                                 </div>
                             </div>
                         </div>
-                                                                                <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="admin_user_id">Nhân viên</label>
-                                    <input type="number" min="0" class="form-control m-input" name="admin_user_id" id="admin_user_id" required placeholder="Nhân viên" value="{{ old('admin_user_id') ? old('admin_user_id') : $order->admin_user_id }}">
-                                </div>
-                            </div>
-                        </div>
-                                                                                <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="customer_id">Mã khách hàng</label>
-                                    <input type="number" min="0" class="form-control m-input" name="customer_id" id="customer_id" required placeholder="Mã khách hàng" value="{{ old('customer_id') ? old('customer_id') : $order->customer_id }}">
-                                </div>
-                            </div>
-                        </div>
+                    
+                                                                            
                                                                                 <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group ">

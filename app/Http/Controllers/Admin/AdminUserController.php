@@ -6,9 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Repositories\AdminUserRepositoryInterface;
 use App\Http\Requests\Admin\AdminUserRequest;
 use App\Http\Requests\PaginationRequest;
+use App\Models\AdminUserRole;
 use App\Services\FileUploadServiceInterface;
 use App\Repositories\ImageRepositoryInterface;
 use App\Repositories\AdminUserRoleRepositoryInterface;
+use App\Repositories\ConfigRepositoryInterface;
+use App\Http\Requests\BaseRequest;
+use App\Repositories\DeliveryCodeRepositoryInterface;
+use App\Models\DeliveryCode;
 
 class AdminUserController extends Controller
 {
@@ -24,18 +29,24 @@ class AdminUserController extends Controller
 
     /** @var ImageRepositoryInterface $imageRepository */
     protected $imageRepository;
+    protected $configRepo;
+    protected $deliveryCode;
 
     public function __construct(
         AdminUserRepositoryInterface $adminUserRepository,
         FileUploadServiceInterface $fileUploadService,
         ImageRepositoryInterface $imageRepository,
-        AdminUserRoleRepositoryInterface $adminUserRoleRepository
+        AdminUserRoleRepositoryInterface $adminUserRoleRepository,
+        ConfigRepositoryInterface $configRepo,
+        DeliveryCodeRepositoryInterface $deliveryCode
     )
     {
         $this->adminUserRepository = $adminUserRepository;
         $this->fileUploadService = $fileUploadService;
         $this->imageRepository = $imageRepository;
         $this->adminUserRoleRepository = $adminUserRoleRepository;
+        $this->configRepo = $configRepo;
+        $this->deliveryCode = $deliveryCode;
     }
 
     /**
@@ -148,6 +159,11 @@ class AdminUserController extends Controller
             if (!empty($image)) {
                 $this->adminUserRepository->update($adminUser, ['profile_image_id' => $image->id]);
             }
+        }
+
+        if ($request->get('role')[0] == AdminUserRole::ROLE_CUSTOMER) {
+            $code = 'KH'.$adminUser->id;
+            $this->adminUserRepository->update($adminUser, ['code' => $code]);
         }
 
         return redirect()
@@ -267,4 +283,79 @@ class AdminUserController extends Controller
             ->with('message-success', trans('admin.messages.general.delete_success'));
     }
 
+    public function payment(BaseRequest $request)
+    {
+        $code = $request->get('code', null);
+        if (!$code) {
+            return view(
+                'pages.admin.' . config('view.admin') . '.admin-users.payment',
+                []
+            );
+        }
+        $customer = $this->adminUserRepository->findByCode($code);
+        $deliveryCodes = $this->deliveryCode->allByCustomerIdAndStatus($customer->id, DeliveryCode::STATUS_RECIVED);
+        $arrWeight = $deliveryCodes->pluck('weight')->toArray();
+        $money = $this->adminUserRepository->getMonney($customer->id, $arrWeight);
+
+        return view(
+            'pages.admin.' . config('view.admin') . '.admin-users.payment',
+            [
+                'customer' => $customer,
+                'deliveryCodes' => $deliveryCodes,
+                'money' => $money,
+                'code' => $code
+            ]
+        ); 
+    }
+
+    public function updateStatusAfterPayment($customerId)
+    {
+        $deliveryCodes = $this->deliveryCode->allByCustomerIdAndStatus($customerId, DeliveryCode::STATUS_RECIVED);
+        foreach($deliveryCodes as $deliveryCode) {
+            $deliveryCode->status = DeliveryCode::STATUS_PAYED;
+            $deliveryCode->save();
+        }
+
+        return redirect()->back()->with('message-success', 'Thanh toán thành công');
+    }
+
+    public function config()
+    {
+        $config = $this->configRepo->all();
+        if (count($config)) {
+            $config = $config->first();
+        } else {
+            $config = null;
+        }
+        
+        return view(
+            'pages.admin.' . config('view.admin') . '.admin-users.config',
+            [
+                'config' => $config
+            ]
+        );
+    }
+
+    public function storeConfig(BaseRequest $request)
+    {
+        $value = $request->get('config');
+        if ($value == null) {
+            return redirect()
+                ->back()
+                ->withErrors(trans('Bạn phải nhập giá trị'));
+        }
+        $config = $this->configRepo->all();
+        
+        if (count($config)) {
+            $config = $config->first();
+            $config->value = $value;
+            $config->save();
+        } else {
+            $this->configRepo->create(['name' => config('app.monney_per_kg'), 'value' => $value]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('message-success', trans('admin.messages.general.update_success'));
+    }
 }

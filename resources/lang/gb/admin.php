@@ -236,6 +236,18 @@ return [
                 'price' => 'Price',
             ],
         ],
+        'orders-deliveries'   => [
+            'columns'  => [
+                'order_id' => 'Order_id',
+                'delivery_code_id' => 'Delivery_code_id',
+            ],
+        ],
+        'delivery-codes-tempts'   => [
+            'columns'  => [
+                'name' => 'Name',
+                'code' => 'Code',
+            ],
+        ],
         /* NEW PAGE STRINGS */
     ],
     'roles'      => [

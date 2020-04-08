@@ -18,7 +18,6 @@ class CreateordersTable extends Migration
             $table->string("code");
             $table->integer("deliveried_money");
             $table->integer("total_money");
-            $table->bigInteger("admin_user_id");
             $table->bigInteger("customer_id");
             $table->datetime('time')->nullable();
 

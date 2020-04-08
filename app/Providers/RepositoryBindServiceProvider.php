@@ -103,6 +103,21 @@ class RepositoryBindServiceProvider extends ServiceProvider {
             \App\Repositories\Eloquent\PriceRepository::class
         );
 
+        $this->app->singleton(
+            \App\Repositories\OrdersDeliveryRepositoryInterface::class,
+            \App\Repositories\Eloquent\OrdersDeliveryRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\ConfigRepositoryInterface::class,
+            \App\Repositories\Eloquent\ConfigRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\DeliveryCodesTemptRepositoryInterface::class,
+            \App\Repositories\Eloquent\DeliveryCodesTemptRepository::class
+        );
+
         /* NEW BINDING */
     }
 }

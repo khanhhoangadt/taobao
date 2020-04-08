@@ -31,12 +31,19 @@ class OrderRequest extends BaseRequest
      */
     public function rules()
     {
-        return $this->orderRepository->rules();
+        $id = ($this->method() == 'PUT') ? $this->route('order') : 0;
+
+        return [
+            'code' => 'required|unique:orders,code,'.$id,
+        ];
     }
 
     public function messages()
     {
-        return $this->orderRepository->messages();
+        return [
+            'code.unique' => 'Mã hoá đơn đã tồn tại',
+            'code.required' => 'Mã hoá đơn là bắt buộc'
+        ];
     }
 
 }

@@ -85,6 +85,7 @@
                             <td>
                                 <a href="{!! URL::action('Admin\OrderController@show', $order->id) !!}" class="btn btn-block btn-primary btn-xs">Chỉnh sửa</a>
                                 <a href="#" class="btn btn-block btn-danger btn-xs delete-button" data-delete-url="{!! action('Admin\OrderController@destroy', $order->id) !!}">Xóa</a>
+                                <a href="{!! URL::action('Admin\OrderController@listDeliveryCode', $order->id) !!}" class="btn btn-block btn-success btn-xs">Mã vận đơn</a>
                             </td>
                         </tr>
                     @endforeach

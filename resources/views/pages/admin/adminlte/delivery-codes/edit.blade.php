@@ -5,15 +5,18 @@
 
 @section('styles')
     <link rel="stylesheet" href="{!! \URLHelper::asset('libs/datetimepicker/css/bootstrap-datetimepicker.min.css', 'admin') !!}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 @stop
 
 @section('scripts')
     <script src="{{ \URLHelper::asset('libs/moment/moment.min.js', 'admin') }}"></script>
     <script src="{{ \URLHelper::asset('libs/datetimepicker/js/bootstrap-datetimepicker.min.js', 'admin') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script>
         $('.datetime-field').datetimepicker({'format': 'YYYY-MM-DD HH:mm:ss', 'defaultDate': new Date()});
 
         $(document).ready(function () {
+            $('.customer').select2()
             $('#cover-image').change(function (event) {
                 $('#cover-image-preview').attr('src', URL.createObjectURL(event.target.files[0]));
             });
@@ -68,7 +71,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="code">Mã vận đơn</label>
-                                    <input type="text" class="form-control m-input" name="code" id="code" required placeholder="Mã vận đơn" value="{{ old('code') ? old('code') : $deliveryCode->code }}">
+                                    <div class="form-control m-input">{{$deliveryCode->code }}</div>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +79,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="weight">Cân nặng</label>
-                                    <input type="number" min="0" class="form-control m-input" name="weight" id="weight" required placeholder="Cân nặng" value="{{ old('weight') ? old('weight') : $deliveryCode->weight }}">
+                                    <input type="number" min="0" class="form-control m-input" name="weight" id="weight" placeholder="Cân nặng" value="{{ old('weight') ? old('weight') : $deliveryCode->weight }}">
                                 </div>
                             </div>
                         </div>
@@ -84,7 +87,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="customer_id">Mã khách hàng</label>
-                                    <input type="number" min="0" class="form-control m-input" name="customer_id" id="customer_id" required placeholder="Mã khách hàng" value="{{ old('customer_id') ? old('customer_id') : $deliveryCode->customer_id }}">
+                                    <div class="form-control m-input">{{@$deliveryCode->customer->name}} - {{@$deliveryCode->customer->code}}</div>
                                 </div>
                             </div>
                         </div>
@@ -92,11 +95,15 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="status">Trạng thái</label>
-                                    <input type="number" min="0" class="form-control m-input" name="status" id="status" required placeholder="Trạng thái" value="{{ old('status') ? old('status') : $deliveryCode->status }}">
+                                    <select name="status" id="" class="form-control">
+                                        <option value="1" @if($deliveryCode->status == 1) selected @endif>Chưa nhận hàng</option>
+                                        <option value="2" @if($deliveryCode->status == 2) selected @endif>Đã nhận hàng</option>
+                                        <option value="3" @if($deliveryCode->status == 3) selected @endif>Đã giao hàng cho khách</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                                                </div>
+                        </div>
 
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary btn-sm" style="width: 125px;">Lưu</button>

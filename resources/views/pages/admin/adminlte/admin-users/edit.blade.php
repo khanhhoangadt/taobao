@@ -169,6 +169,13 @@
                                             <input type="checkbox" name="role[]" value="{{ \App\Models\AdminUserRole::ROLE_ADMIN }}" class="hidden" @if( $adminUser->hasRole(\App\Models\AdminUserRole::ROLE_ADMIN, false) ) checked @endif/>
                                         </span>
                                     @endif
+
+                                    @if( $authUser->hasRole(\App\Models\AdminUserRole::ROLE_CUSTOMER) )
+                                        <span class="button-checkbox" style="margin: 0 10px;">
+                                            <button type="button" class="btn btn-xs" data-color="info">Customer</button>
+                                            <input type="checkbox" name="role[]" value="{{ \App\Models\AdminUserRole::ROLE_CUSTOMER }}" class="hidden" @if( $adminUser->hasRole(\App\Models\AdminUserRole::ROLE_CUSTOMER, false) ) checked @endif/>
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                         </table>

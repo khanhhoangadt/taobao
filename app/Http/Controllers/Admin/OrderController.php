@@ -7,16 +7,31 @@ use App\Http\Controllers\Controller;
 use App\Repositories\OrderRepositoryInterface;
 use App\Http\Requests\Admin\OrderRequest;
 use App\Http\Requests\PaginationRequest;
+use App\Services\AdminUserServiceInterface;
+use \App\Repositories\OrdersDeliveryRepositoryInterface;
+use \App\Repositories\DeliveryCodeRepositoryInterface;
+use App\Http\Requests\BaseRequest;
+use DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
     /** @var  \App\Repositories\OrderRepositoryInterface */
     protected $orderRepository;
+    protected $adminService;
+    protected $orderDeliveryRepo;
+    protected $deliveryCodeRepo;
 
     public function __construct(
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        AdminUserServiceInterface $adminService,
+        OrdersDeliveryRepositoryInterface $orderDeliveryRepo,
+        DeliveryCodeRepositoryInterface $deliveryCodeRepo
     ) {
         $this->orderRepository = $orderRepository;
+        $this->adminService = $adminService;
+        $this->orderDeliveryRepo = $orderDeliveryRepo;
+        $this->deliveryCodeRepo = $deliveryCodeRepo;
     }
 
     /**
@@ -35,6 +50,8 @@ class OrderController extends Controller
 
         $filter = [];
         $keyword = $request->get('keyword');
+        $userLogin = $this->adminService->getUser();
+        $filter['customer_id'] = $userLogin->id;
         if (!empty($keyword)) {
             $filter['query'] = $keyword;
         }
@@ -79,16 +96,14 @@ class OrderController extends Controller
     {
         $input = $request->only(
             [
-                            'code',
-                            'deliveried_money',
-                            'total_money',
-                            'admin_user_id',
-                            'customer_id',
-                            'time',
-                        ]
+                'code',
+                'deliveried_money',
+                'total_money',
+                'time',
+            ]
         );
-
-        $input['is_enabled'] = $request->get('is_enabled', 0);
+        $userLogin = $this->adminService->getUser();
+        $input['customer_id'] = $userLogin->id;
         $order = $this->orderRepository->create($input);
 
         if( empty($order) ) {
@@ -149,13 +164,11 @@ class OrderController extends Controller
 
         $input = $request->only(
             [
-                            'code',
-                            'deliveried_money',
-                            'total_money',
-                            'admin_user_id',
-                            'customer_id',
-                            'time',
-                        ]
+                'code',
+                'deliveried_money',
+                'total_money',
+                'time',
+            ]
         );
 
         $input['is_enabled'] = $request->get('is_enabled', 0);
@@ -184,4 +197,76 @@ class OrderController extends Controller
                     ->with('message-success', trans('admin.messages.general.delete_success'));
     }
 
+    public function listDeliveryCode($orderId)
+    {
+        $deliveryIds = $this->orderDeliveryRepo->allByOrderId($orderId)->pluck('delivery_code_id')->toArray();
+        $deliveryCodes = $this->deliveryCodeRepo->allByIds($deliveryIds);
+        
+        return view(
+            'pages.admin.' . config('view.admin') . '.orders.delivery_codes',
+            [
+                'deliveryCodes' => $deliveryCodes,
+                'orderId' => $orderId
+            ]
+        );
+    }
+
+    public function createDeliveryCode($orderId)
+    {
+        return view(
+            'pages.admin.' . config('view.admin') . '.orders.create-delivery-code',
+            [
+                'orderId' => $orderId
+            ]
+        );
+    }
+
+    public function saveDeliveryCode(BaseRequest $request)
+    {
+        $orderId = $request->get('order_id');
+        $deliveryCode = $request->get('delivery_code');
+        /**
+         * tạo delivery code trong bảng delivery
+         * tạo bản ghi trong  bảng order delivery
+        */
+        try {
+            DB::beginTransaction();
+            $order = $this->orderRepository->find($orderId);
+            $deliveryInput = [];
+            $deliveryInput['code'] = $deliveryCode;
+            $deliveryInput['customer_id'] = $order->customer_id;
+            $deliveryCreated = $this->deliveryCodeRepo->create($deliveryInput);
+            $deliveryOrderInput = [];
+            $deliveryOrderInput['order_id'] = $orderId;
+            $deliveryOrderInput['delivery_code_id'] = $deliveryCreated->id;
+            $this->orderDeliveryRepo->create($deliveryOrderInput);
+            DB::commit();
+
+            return redirect()->action('Admin\OrderController@listDeliveryCode', $orderId)
+            ->with('message-success', trans('admin.messages.general.create_success'));
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('OrderController@saveDeliveryCode'. $e->getMessage().$e->getLine());
+        }
+    }
+
+    public function destroyDeliveryCode($deliveryCodeId)
+    {
+        try {
+            DB::beginTransaction();
+            $deliveryCodeOrder = $this->orderDeliveryRepo->findByDeliveryCodeId($deliveryCodeId);
+            $deliveryCode = $deliveryCodeOrder->deliveryCode;
+            $userLogin = $this->adminService->getUser();
+            if ($deliveryCode->customer_id != $userLogin->id) { //Ma van don khong thuoc ve user dang dang nhap
+                return false;
+            }
+            $deliveryCode->delete();
+            $deliveryCodeOrder->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('OrderController@destroyDeliveryCode'. $e->getMessage().$e->getLine());
+        }
+    }
 }

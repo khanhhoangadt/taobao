@@ -23,7 +23,6 @@ class Order extends Base
         'code',
         'deliveried_money',
         'total_money',
-        'admin_user_id',
         'customer_id',
         'time',
     ];
