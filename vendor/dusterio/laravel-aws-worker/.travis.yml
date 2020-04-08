@@ -1,0 +1,11 @@
+language: php
+
+php:
+  - '7.0'
+
+before_script:
+  - composer install --dev
+
+addons:
+    code_climate:
+        repo_token: 989ab71e9103d594cabbd93fe473ff9c92ad76bb80c55c57d2a9c436e28a3f14
