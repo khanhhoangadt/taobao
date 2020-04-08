@@ -56,7 +56,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="code">Mã vận đơn</label>
-                            <input type="text" class="form-control m-input" name="delivery_code" id="code" required placeholder="Mã hoá đơn">
+                            <input type="text" class="form-control m-input" name="delivery_code" id="code" required>
                             <input type="hidden" value="{{$orderId}}" name="order_id">
                         </div>
                     </div>

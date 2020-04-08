@@ -25,15 +25,17 @@ class DeliveryCodeImport implements ToModel, WithStartRow
             $code = $row[1];
             $name = $row[3];
             $weight = $row[4];
+            
             if (is_int($code)) intval($code);
+            
             $data = DeliveryCode::where('code', $code)->first();
-            if (!empty($deliveryCode)) {
+            if (!empty($data)) {
                 $data->weight = $weight;
                 $data->status = DeliveryCode::STATUS_RECIVED;
                 $data->save();
             } else {
                 if ($code && $name) {
-                    $data = DeliveryCodesTempt::create([
+                    $data = DeliveryCodesTempt::firstOrCreate([
                         'name' => $name,
                         'code' => $code
                     ]);

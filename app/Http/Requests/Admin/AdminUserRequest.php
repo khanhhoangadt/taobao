@@ -31,12 +31,18 @@ class AdminUserRequest extends BaseRequest
      */
     public function rules()
     {
-        return $this->adminUserRepository->rules();
+        $id = ($this->method() == 'PUT') ? $this->route('admin-user') : 0;
+
+        return [
+            'code' => 'unique:admin_users,code,'.$id,
+        ];
     }
 
     public function messages()
     {
-        return $this->adminUserRepository->messages();
+        return [
+            'code.unique' => 'Mã hoá đơn đã tồn tại',
+        ];
     }
 
 }

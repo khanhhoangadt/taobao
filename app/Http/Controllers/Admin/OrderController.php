@@ -231,6 +231,10 @@ class OrderController extends Controller
         */
         try {
             DB::beginTransaction();
+            $deliveryCodeCreated = $this->deliveryCodeRepo->findByCode($deliveryCode);
+            if (!empty($deliveryCodeCreated)) {
+                return redirect()->back()->withErrors('Mã vận đơn đã tồn tại');
+            }
             $order = $this->orderRepository->find($orderId);
             $deliveryInput = [];
             $deliveryInput['code'] = $deliveryCode;

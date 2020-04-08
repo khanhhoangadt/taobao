@@ -117,6 +117,7 @@ class AdminUserController extends Controller
                 're_password',
                 'locale',
                 'phone',
+                'code'
             ]
         );
         $exist = $this->adminUserRepository->findByEmail($input['email']);
@@ -162,8 +163,10 @@ class AdminUserController extends Controller
         }
 
         if ($request->get('role')[0] == AdminUserRole::ROLE_CUSTOMER) {
-            $code = 'KH'.$adminUser->id;
-            $this->adminUserRepository->update($adminUser, ['code' => $code]);
+            if ($input['code'] == null) {
+                $code = 'KH'.$adminUser->id;
+                $this->adminUserRepository->update($adminUser, ['code' => $code]);
+            }
         }
 
         return redirect()

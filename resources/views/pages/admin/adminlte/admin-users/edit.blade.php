@@ -91,6 +91,16 @@
                                 </td>
                             </tr>
 
+                            <tr class="@if ($errors->has('code')) has-error @endif">
+                                <td>
+                                    <label for="code">Mã nhân viên</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="code" name="code" value="{{ old('code') ? old('code') : $adminUser->code }}">
+                                </td>
+                            </tr>
+
+
                             <tr class="@if ($errors->has('email')) has-error @endif">
                                 <td>
                                     <label for="email">@lang('admin.pages.admin-users.columns.email')</label>
