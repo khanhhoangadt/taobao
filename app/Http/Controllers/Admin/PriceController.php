@@ -39,9 +39,10 @@ class PriceController extends Controller
         $paginate['baseUrl']    = action('Admin\PriceController@index');
 
         $filter = [];
-        $keyword = $request->get('keyword');
-        if (!empty($keyword)) {
-            $filter['query'] = $keyword;
+        $code = $request->get('keyword');
+        $customer = $this->adminUserRepository->findByCode($code);
+        if (!empty($customer)) {
+            $filter['customer_id'] = $customer->id;
         }
 
         $count = $this->priceRepository->countByFilter($filter);
@@ -53,7 +54,7 @@ class PriceController extends Controller
                 'prices'    => $prices,
                 'count'         => $count,
                 'paginate'      => $paginate,
-                'keyword'       => $keyword
+                'keyword'       => $code
             ]
         );
     }
@@ -72,6 +73,7 @@ class PriceController extends Controller
             [
                 'isNew'     => true,
                 'price' => $this->priceRepository->getBlankModel(),
+                'customers' => $customers
             ]
         );
     }

@@ -68,6 +68,7 @@
                         <th style="width: 10px">{!! \PaginationHelper::sort('id', 'ID') !!}</th>
                         <th>{!! \PaginationHelper::sort('qty','Số lượng') !!}</th>
                         <th>{!! \PaginationHelper::sort('price','Giá vận chuyển') !!}</th>        
+                        <th>{!! \PaginationHelper::sort('id','Mã khách hàng') !!}</th>        
                         <th style="width: 40px">@lang('admin.pages.common.label.actions')</th>
                     </tr>
                 </thead>
@@ -78,8 +79,8 @@
                             <td>{{ $price->id }}</td>
                             <td>{{ $price->qty }}</td>
                             <td>{{ $price->price }}</td>
-                                                        <td>
-                                <a href="{!! URL::action('Admin\PriceController@show', $price->id) !!}" class="btn btn-block btn-primary btn-xs">Chỉnh sửa</a>
+                            <td>{{ @$price->customer->code }}</td>
+                            <td>
                                 <a href="#" class="btn btn-block btn-danger btn-xs delete-button" data-delete-url="{!! action('Admin\PriceController@destroy', $price->id) !!}">Xóa</a>
                             </td>
                         </tr>

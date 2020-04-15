@@ -11,8 +11,10 @@ use App\Services\AdminUserServiceInterface;
 use \App\Repositories\OrdersDeliveryRepositoryInterface;
 use \App\Repositories\DeliveryCodeRepositoryInterface;
 use App\Http\Requests\BaseRequest;
-use DB;
+use App\Models\DeliveryCode;
+use App\Models\AdminUserRole;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\AdminUserRepositoryInterface;
 
 class OrderController extends Controller
 {
@@ -21,17 +23,20 @@ class OrderController extends Controller
     protected $adminService;
     protected $orderDeliveryRepo;
     protected $deliveryCodeRepo;
+    protected $adminRepo;
 
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         AdminUserServiceInterface $adminService,
         OrdersDeliveryRepositoryInterface $orderDeliveryRepo,
-        DeliveryCodeRepositoryInterface $deliveryCodeRepo
+        DeliveryCodeRepositoryInterface $deliveryCodeRepo,
+        AdminUserRepositoryInterface $adminRepo
     ) {
         $this->orderRepository = $orderRepository;
         $this->adminService = $adminService;
         $this->orderDeliveryRepo = $orderDeliveryRepo;
         $this->deliveryCodeRepo = $deliveryCodeRepo;
+        $this->adminRepo = $adminRepo;
     }
 
     /**
@@ -197,79 +202,102 @@ class OrderController extends Controller
                     ->with('message-success', trans('admin.messages.general.delete_success'));
     }
 
-    public function listDeliveryCode($orderId)
+    public function listDeliveryCode(PaginationRequest $request)
     {
-        $deliveryIds = $this->orderDeliveryRepo->allByOrderId($orderId)->pluck('delivery_code_id')->toArray();
-        $deliveryCodes = $this->deliveryCodeRepo->allByIds($deliveryIds);
-        
+        $paginate['limit']      = $request->limit();
+        $paginate['offset']     = $request->offset();
+        $paginate['order']      = $request->order();
+        $paginate['direction']  = $request->direction();
+        $paginate['baseUrl']    = action('Admin\OrderController@listDeliveryCode');
+
+        $filter = [];
+        $keyword = $request->get('keyword');
+        $userLogin = $this->adminService->getUser();
+        if ($userLogin->hasRole(AdminUserRole::ROLE_CUSTOMER)) {
+            $filter['customer_id'] = $userLogin->id;
+        }
+
+        if (!empty($keyword)) {
+            $filter['code'] = $keyword;
+        }
+        $strDeliveryCode = "";
+        $totalMoney = 0;
+        if ($userLogin->hasRole(AdminUserRole::ROLE_CUSTOMER)) {
+            $deliveryCodesReciveds = $this->deliveryCodeRepo->allByStatusAndCustomerId(DeliveryCode::STATUS_RECIVED, $userLogin->id);
+            $arrWeight = $deliveryCodesReciveds->pluck('weight')->toArray();
+            $totalMoney = $this->adminRepo->getMonney($userLogin->id, $arrWeight);
+            foreach($deliveryCodesReciveds as $key => $deliveryCodesRecived) {
+                if ($key != 0) {
+                    $strDeliveryCode .= ', ';
+                }
+                $strDeliveryCode .= $deliveryCodesRecived->code;
+            }
+        }
+
+        $count = $this->deliveryCodeRepo->countByFilter($filter);
+        $deliveryCodes = $this->deliveryCodeRepo->getByFilter($filter, $paginate['order'], $paginate['direction'], $paginate['offset'], $paginate['limit']);
+
         return view(
             'pages.admin.' . config('view.admin') . '.orders.delivery_codes',
             [
                 'deliveryCodes' => $deliveryCodes,
-                'orderId' => $orderId
+                'count'         => $count,
+                'paginate'      => $paginate,
+                'keyword'       => $keyword,
+                'totalMoney' => $totalMoney,
+                'strDeliveryCode' => $strDeliveryCode
             ]
         );
     }
 
-    public function createDeliveryCode($orderId)
+    public function createDeliveryCode()
     {
         return view(
             'pages.admin.' . config('view.admin') . '.orders.create-delivery-code',
             [
-                'orderId' => $orderId
             ]
         );
     }
 
     public function saveDeliveryCode(BaseRequest $request)
     {
-        $orderId = $request->get('order_id');
-        $deliveryCode = $request->get('delivery_code');
+        $input = $request->only(['code', 'order_code', 'note']);
+        $userLogin = $this->adminService->getUser();
         /**
          * tạo delivery code trong bảng delivery
          * tạo bản ghi trong  bảng order delivery
         */
         try {
-            DB::beginTransaction();
-            $deliveryCodeCreated = $this->deliveryCodeRepo->findByCode($deliveryCode);
+            $deliveryCodeCreated = $this->deliveryCodeRepo->findByCode($input['code']);
             if (!empty($deliveryCodeCreated)) {
                 return redirect()->back()->withErrors('Mã vận đơn đã tồn tại');
             }
-            $order = $this->orderRepository->find($orderId);
-            $deliveryInput = [];
-            $deliveryInput['code'] = $deliveryCode;
-            $deliveryInput['customer_id'] = $order->customer_id;
-            $deliveryCreated = $this->deliveryCodeRepo->create($deliveryInput);
-            $deliveryOrderInput = [];
-            $deliveryOrderInput['order_id'] = $orderId;
-            $deliveryOrderInput['delivery_code_id'] = $deliveryCreated->id;
-            $this->orderDeliveryRepo->create($deliveryOrderInput);
-            DB::commit();
-
-            return redirect()->action('Admin\OrderController@listDeliveryCode', $orderId)
+            $input['customer_id'] = $userLogin->id;
+            $this->deliveryCodeRepo->create($input);
+    
+            return redirect()->action('Admin\OrderController@listDeliveryCode')
             ->with('message-success', trans('admin.messages.general.create_success'));
 
         } catch (\Exception $e) {
-            DB::rollback();
             Log::error('OrderController@saveDeliveryCode'. $e->getMessage().$e->getLine());
+            return redirect()->back()->withErrors('Tạo mã vận đơn thất bại');
         }
     }
 
     public function destroyDeliveryCode($deliveryCodeId)
     {
         try {
-            DB::beginTransaction();
-            $deliveryCodeOrder = $this->orderDeliveryRepo->findByDeliveryCodeId($deliveryCodeId);
-            $deliveryCode = $deliveryCodeOrder->deliveryCode;
+            $deliveryCode = $this->deliveryCodeRepo->findById($deliveryCodeId);
             $userLogin = $this->adminService->getUser();
             if ($deliveryCode->customer_id != $userLogin->id) { //Ma van don khong thuoc ve user dang dang nhap
                 return false;
             }
+
+            if ($deliveryCode->status == DeliveryCode::STATUS_PAYED) {
+                return false;
+            }
             $deliveryCode->delete();
-            $deliveryCodeOrder->delete();
-            DB::commit();
         } catch (\Exception $e) {
-            DB::rollback();
             Log::error('OrderController@destroyDeliveryCode'. $e->getMessage().$e->getLine());
         }
     }

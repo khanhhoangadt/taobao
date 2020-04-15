@@ -45,7 +45,7 @@
         <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    <a href="{!! URL::action('Admin\OrderController@listDeliveryCode', $orderId) !!}" class="btn btn-block btn-default btn-sm" style="width: 125px;">
+                    <a href="{!! URL::action('Admin\OrderController@listDeliveryCode') !!}" class="btn btn-block btn-default btn-sm" style="width: 125px;">
                         @lang('admin.pages.common.buttons.back')
                     </a>
                 </h3>
@@ -56,8 +56,23 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="code">Mã vận đơn</label>
-                            <input type="text" class="form-control m-input" name="delivery_code" id="code" required>
-                            <input type="hidden" value="{{$orderId}}" name="order_id">
+                            <input type="text" class="form-control m-input" name="code" id="code" required>
+                        </div>
+                    </div>
+                </div>    
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="order_code">Mã Hoá Đơn</label>
+                            <input type="text" class="form-control m-input" name="order_code" id="order_code">
+                        </div>
+                    </div>
+                </div>    
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="note">Ghi chú</label>
+                            <input type="text" class="form-control m-input" name="note" id="note">
                         </div>
                     </div>
                 </div>                                                

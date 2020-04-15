@@ -12,6 +12,7 @@ use App\Models\AdminUserRole;
 use App\Services\AdminUserServiceInterface;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\DeliveryCodeImport;
+use App\Models\DeliveryCode;
 
 class DeliveryCodeController extends Controller
 {
@@ -189,6 +190,10 @@ class DeliveryCodeController extends Controller
         if( empty($deliveryCode) ) {
             abort(404);
         }
+        if ($deliveryCode->status == DeliveryCode::STATUS_PAYED) {
+            return false;
+        }
+        
         $this->deliveryCodeRepository->delete($deliveryCode);
 
         return redirect()->action('Admin\DeliveryCodeController@index')

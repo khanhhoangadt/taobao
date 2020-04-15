@@ -45,7 +45,7 @@ class Price extends Base
     // Relations
     public function customer()
     {
-        return $this->belongsTo(\App\Models\Customer::class, 'customer_id', 'id');
+        return $this->belongsTo(\App\Models\AdminUser::class, 'customer_id', 'id');
     }
 
     

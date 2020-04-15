@@ -1,4 +1,4 @@
-@extends('pages.admin.' . config('view.admin') . '.layout.application', ['menu' => 'delivery-codes'] )
+@extends('pages.admin.' . config('view.admin') . '.layout.application', ['menu' => 'delivery_codes'] )
 
 @section('metadata')
 @stop
@@ -96,9 +96,9 @@
                                 <div class="form-group">
                                     <label for="status">Trạng thái</label>
                                     <select name="status" id="" class="form-control">
-                                        <option value="1" @if($deliveryCode->status == 1) selected @endif>Chưa nhận hàng</option>
-                                        <option value="2" @if($deliveryCode->status == 2) selected @endif>Đã nhận hàng</option>
-                                        <option value="3" @if($deliveryCode->status == 3) selected @endif>Đã giao hàng cho khách</option>
+                                        <option value="1" @if($deliveryCode->status == 1) selected @endif>Đang về</option>
+                                        <option value="2" @if($deliveryCode->status == 2) selected @endif>Đang ở kho Hà Nội</option>
+                                        <option value="3" @if($deliveryCode->status == 3) selected @endif>Khách đã nhận</option>
                                     </select>
                                 </div>
                             </div>

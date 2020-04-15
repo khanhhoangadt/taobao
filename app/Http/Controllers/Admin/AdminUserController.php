@@ -296,7 +296,10 @@ class AdminUserController extends Controller
             );
         }
         $customer = $this->adminUserRepository->findByCode($code);
+        if (empty($customer)) return redirect()->back()->withErrors('Không có khách hàng phù hợp');
+
         $deliveryCodes = $this->deliveryCode->allByCustomerIdAndStatus($customer->id, DeliveryCode::STATUS_RECIVED);
+        
         $arrWeight = $deliveryCodes->pluck('weight')->toArray();
         $money = $this->adminUserRepository->getMonney($customer->id, $arrWeight);
 

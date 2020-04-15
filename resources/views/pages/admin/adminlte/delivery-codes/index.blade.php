@@ -1,4 +1,4 @@
-@extends('pages.admin.' . config('view.admin') . '.layout.application', ['menu' => 'delivery-codes'] )
+@extends('pages.admin.' . config('view.admin') . '.layout.application', ['menu' => 'delivery_codes'] )
 
 @section('metadata')
 @stop
@@ -58,7 +58,7 @@
                 @csrf
                 <div class="row" style="padding-bottom: 20px">
                     <div class="col-md-2" style="padding-left: 25px;">
-                        <input type="file" name="file" class="form-control">
+                        <input type="file" name="file" class="form-control" required>
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-success">Import</button>
@@ -72,7 +72,7 @@
                         <th>{!! \PaginationHelper::sort('code', 'Mã vận đơn') !!}</th>
                         <th>{!! \PaginationHelper::sort('weight', 'Cân nặng') !!}</th>
                         <th>{!! \PaginationHelper::sort('id', 'Người cập nhật gần nhất') !!}</th>
-                        <th>{!! \PaginationHelper::sort('id', 'Khách hàng') !!}</th>
+                        <th>{!! \PaginationHelper::sort('id', 'Mã khách hàng') !!}</th>
                         <th>{!! \PaginationHelper::sort('status', 'Trạng thái') !!}</th>                        
                         <th style="width: 40px">@lang('admin.pages.common.label.actions')</th>
                     </tr>
@@ -85,21 +85,21 @@
                             <td>{{ $deliveryCode->code }}</td>
                             <td>{{ $deliveryCode->weight }}</td>
                             <td>{{ @$deliveryCode->staff->name }}</td>
-                            <td>{{ @$deliveryCode->customer->name }}</td>
+                            <td>{{ @$deliveryCode->customer->code }}</td>
                             <td>
                                 @if ($deliveryCode->status == 1)
-                                <span style="color:#DC143C">Chưa nhận hàng</span>
+                                <span style="color:#DC143C">Đang về</span>
                                 @elseif($deliveryCode->status == 2)
-                                <span style="color:#FFA500">Đã nhận hàng</span>
+                                <span style="color:#FFA500">Đang ở kho Hà Nội</span>
                                 @elseif($deliveryCode->status == 3)
-                                <span style="color:#483D8B">Đã giao hàng cho khách</span>
+                                <span style="color:#483D8B">Khách đã nhận</span>
                                 @endif
                             </td>
                             <td>
                                 @if ($deliveryCode->status != 3)
                                 <a href="{!! URL::action('Admin\DeliveryCodeController@show', $deliveryCode->id) !!}" class="btn btn-block btn-primary btn-xs">Chỉnh sửa</a>
-                                @endif
                                 <a href="#" class="btn btn-block btn-danger btn-xs delete-button" data-delete-url="{!! action('Admin\DeliveryCodeController@destroy', $deliveryCode->id) !!}">Xóa</a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

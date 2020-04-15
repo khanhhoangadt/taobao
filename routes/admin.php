@@ -56,8 +56,8 @@
         \Route::post('signout', 'Admin\AuthController@postSignOut');
 
         \Route::resource('orders', 'Admin\OrderController');
-        \Route::get('orders-delivery-code/{order_id}', 'Admin\OrderController@listDeliveryCode');
-        \Route::get('create-orders-delivery-code/{order_id}', 'Admin\OrderController@createDeliveryCode');
+        \Route::get('orders-delivery-code', 'Admin\OrderController@listDeliveryCode');
+        \Route::get('create-orders-delivery-code', 'Admin\OrderController@createDeliveryCode');
         \Route::post('save-orders-delivery-code', 'Admin\OrderController@saveDeliveryCode');
         \Route::delete('delete-orders-delivery-code/{delivery_code_id}', 'Admin\OrderController@destroyDeliveryCode');
 

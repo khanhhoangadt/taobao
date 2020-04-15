@@ -1,4 +1,4 @@
-@extends('pages.admin.' . config('view.admin') . '.layout.application', ['menu' => 'delivery-codes-tempts'] )
+@extends('pages.admin.' . config('view.admin') . '.layout.application', ['menu' => 'delivery_codes_tempts'] )
 
 @section('metadata')
 @stop

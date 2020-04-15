@@ -5,15 +5,18 @@
 
 @section('styles')
     <link rel="stylesheet" href="{!! \URLHelper::asset('libs/datetimepicker/css/bootstrap-datetimepicker.min.css', 'admin') !!}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 @stop
 
 @section('scripts')
     <script src="{{ \URLHelper::asset('libs/moment/moment.min.js', 'admin') }}"></script>
     <script src="{{ \URLHelper::asset('libs/datetimepicker/js/bootstrap-datetimepicker.min.js', 'admin') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script>
         $('.datetime-field').datetimepicker({'format': 'YYYY-MM-DD HH:mm:ss', 'defaultDate': new Date()});
 
         $(document).ready(function () {
+            $('#customer').select2()
             $('#cover-image').change(function (event) {
                 $('#cover-image-preview').attr('src', URL.createObjectURL(event.target.files[0]));
             });
@@ -64,31 +67,35 @@
             </div>
 
             <div class="box-body">
-                                                            <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="customer_id">Mã khách hàng</label>
-                                    <input type="number" min="0" class="form-control m-input" name="customer_id" id="customer_id" required placeholder="Mã khách hàng" value="{{ old('customer_id') ? old('customer_id') : $price->customer_id }}">
-                                </div>
-                            </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="customer">Mã khách hàng</label>
+                            <select class="form-control m-input" name="customer_id" id="customer" required>
+                                @foreach ($customers as $customer)
+                                    <option value="{{$customer->id}}">{{$customer->code}}</option>
+                                @endforeach
+                            <select>
                         </div>
-                                                                                <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="qty">Số lượng</label>
-                                    <input type="number" min="0" class="form-control m-input" name="qty" id="qty" required placeholder="Số lượng" value="{{ old('qty') ? old('qty') : $price->qty }}">
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="qty">Số lượng</label>
+                            <input type="number" min="0" class="form-control m-input" name="qty" id="qty" required placeholder="Số lượng" value="{{ old('qty') ? old('qty') : $price->qty }}">
                         </div>
-                                                                                <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="price">Giá vận chuyển</label>
-                                    <input type="number" min="0" class="form-control m-input" name="price" id="price" required placeholder="Giá vận chuyển" value="{{ old('price') ? old('price') : $price->price }}">
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="price">Giá vận chuyển</label>
+                            <input type="number" min="0" class="form-control m-input" name="price" id="price" required placeholder="Giá vận chuyển" value="{{ old('price') ? old('price') : $price->price }}">
                         </div>
-                                                </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary btn-sm" style="width: 125px;">Lưu</button>

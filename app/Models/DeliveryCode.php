@@ -19,7 +19,9 @@ class DeliveryCode extends Base
         'weight',
         'customer_id',
         'status',
-        'staff_id'
+        'staff_id',
+        'order_code',
+        'note'
     ];
 
     const STATUS_NOT_RECIVE = 1;
