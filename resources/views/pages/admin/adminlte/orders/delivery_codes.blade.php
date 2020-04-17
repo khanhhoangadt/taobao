@@ -25,7 +25,7 @@
     <div class="box box-primary">
         <div class="box-header with-border">
             <div class="row">
-            <div class="col-sm-6">
+                <div class="col-md-12">
                     <h3 class="box-title">
                         <p class="text-right">
                             <a href="{!! URL::action('Admin\OrderController@createDeliveryCode') !!}"
@@ -35,7 +35,9 @@
                     </h3>
                     <br>
                 </div>
-                <div class="col-md-7">
+            </div>
+            <div class="row">
+                <div class="col-md-8">
                     <form method="get" accept-charset="utf-8" action="{!! action('Admin\OrderController@listDeliveryCode') !!}">
                         {!! csrf_field() !!}
                         <div class="row search-input">
@@ -69,7 +71,7 @@
                         <th>{!! \PaginationHelper::sort('id', 'Mã hoá đơn') !!}</th>
                         <th>{!! \PaginationHelper::sort('id', 'Ghi chú') !!}</th>
                         <th>{!! \PaginationHelper::sort('id', 'Trạng thái') !!}</th>
-                        <th>{!! \PaginationHelper::sort('time', 'Thời gian tạo' ) !!}</th>
+                        <th>{!! \PaginationHelper::sort('created_at', 'Thời gian tạo' ) !!}</th>
                         <th style="width: 40px">@lang('admin.pages.common.label.actions')</th>
                     </tr>
                 </thead>
