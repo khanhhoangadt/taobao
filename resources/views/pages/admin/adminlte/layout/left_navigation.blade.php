@@ -34,13 +34,13 @@
 
                 <li class="header">Users Management</li>
                 <li @if( $menu=='admin_users') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@index') !!}"><i class="fa fa-user-secret"></i> <span>@lang('admin.menu.admin_users')</span></a></li>
-                <li @if( $menu=='prices') class="active" @endif ><a href="{!! \URL::action('Admin\PriceController@index') !!}"><i class="fa fa-users"></i> <span> Bảng giá </span></a></li>
-                <li @if( $menu=='configs') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@config') !!}"><i class="fa fa-users"></i> <span>Thiết lập giá mặc định</span></a></li>
+                <li @if( $menu=='prices') class="active" @endif ><a href="{!! \URL::action('Admin\PriceController@index') !!}"><i class="fa fa-money"></i> <span> Bảng giá </span></a></li>
+                <li @if( $menu=='configs') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@config') !!}"><i class="fa fa-cogs"></i> <span>Thiết lập giá mặc định</span></a></li>
             @endif
             @if( $authUser->hasRole(\App\Models\AdminUserRole::ROLE_ADMIN) )
             <li @if( $menu=='articles') class="active" @endif ><a href="{!! \URL::action('Admin\ArticleController@index') !!}"><i class="fa fa-file-word-o"></i> <span>Viết bài</span></a></li>
-            <li @if( $menu=='delivery_codes') class="active" @endif ><a href="{!! \URL::action('Admin\DeliveryCodeController@index') !!}"><i class="fa fa-users"></i> <span> Mã vận đơn</span></a></li>
-            <li @if( $menu=='payment') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@payment') !!}"><i class="fa fa-users"></i> <span>Thanh Toán</span></a></li>
+            <li @if( $menu=='delivery_codes') class="active" @endif ><a href="{!! \URL::action('Admin\DeliveryCodeController@index') !!}"><i class="fa fa-file-code-o"></i> <span> Mã vận đơn</span></a></li>
+            <li @if( $menu=='payment') class="active" @endif ><a href="{!! \URL::action('Admin\AdminUserController@payment') !!}"><i class="fa fa-calculator"></i> <span>Thanh Toán</span></a></li>
             <li @if( $menu=='delivery_codes_tempts') class="active" @endif ><a href="{!! \URL::action('Admin\DeliveryCodesTemptController@index') !!}"><i class="fa fa-users"></i> <span>MVĐ không thuộc hệ thống</span></a></li>
             @endif
             @if($authUser->hasRole(\App\Models\AdminUserRole::ROLE_CUSTOMER, false))

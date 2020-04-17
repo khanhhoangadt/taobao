@@ -39,12 +39,13 @@ class AdminUserRepository extends AuthenticatableRepository implements AdminUser
         $priceDefault = $this->getConfigModel()->first();
         $totalWeight = array_sum($arrWeight);
         $prices = $this->getPriceModel()->where('customer_id', $customerId)->orderBy('qty', 'desc')->get();
+        
         if (!count($prices)) {
             return $totalWeight * $priceDefault['value'];
         }
 
         foreach($prices as $price) {
-            if ($totalWeight >= $price->qty) return $totalWeight * $price['value'];
+            if ($totalWeight >= $price->qty) return $totalWeight * $price->price;
         }
     }
 }

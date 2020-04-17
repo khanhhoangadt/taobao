@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 use App\Models\DeliveryCodesTempt;
 use DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\AdminUserServiceInterface;
 
 class DeliveryCodeImport implements ToModel, WithStartRow
 {
@@ -29,12 +30,16 @@ class DeliveryCodeImport implements ToModel, WithStartRow
             if (is_int($code)) intval($code);
             
             $data = DeliveryCode::where('code', $code)->first();
+            $userService = app()->make(AdminUserServiceInterface::class);
+            $staff = $userService->getUser();
             if (!empty($data)) {
                 $data->weight = $weight;
                 $data->status = DeliveryCode::STATUS_RECIVED;
+                $data->staff_id = $staff->id;
                 $data->save();
+
             } else {
-                if ($code && $name) {
+                if ($code || $name) {
                     $data = DeliveryCodesTempt::firstOrCreate([
                         'name' => $name,
                         'code' => $code

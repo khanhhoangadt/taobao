@@ -79,7 +79,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="weight">Cân nặng</label>
-                                    <input type="number" min="0" class="form-control m-input" name="weight" id="weight" placeholder="Cân nặng" value="{{ old('weight') ? old('weight') : $deliveryCode->weight }}">
+                                    <input type="number" min="0" step="0.01" class="form-control m-input" name="weight" id="weight" placeholder="Cân nặng" value="{{ old('weight') ? old('weight') : $deliveryCode->weight }}">
                                 </div>
                             </div>
                         </div>
