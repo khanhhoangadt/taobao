@@ -38,6 +38,11 @@ class DeliveryCodeImport implements ToModel, WithStartRow
                 $data->staff_id = $staff->id;
                 $data->save();
 
+                $codeTempt = DeliveryCodesTempt::where('code', $code)->first();
+                if (!empty($codeTempt)) {
+                    $codeTempt->delete();
+                }
+
             } else {
                 if ($code || $name) {
                     $data = DeliveryCodesTempt::firstOrCreate([
